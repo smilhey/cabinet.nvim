@@ -24,11 +24,6 @@ end
 
 function M.generate(win_layout, buffers)
 	if win_layout[1] == "leaf" then
-		-- to make sure the last jump is registered in the jump list before we save it (kinda hacky)
-		-- this also works but generates a lot of scratch buffers if the user never populates a drawer
-		-- vim.api.nvim_feedkeys(ctrl_o, "n", true)
-		-- vim.api.nvim_feedkeys(ctrl_i, "n", true)
-		-- utils.win_set_scratch(win_layout[2])
 		return { "leaf", vim.fn.getjumplist(win_layout[2]), vim.api.nvim_win_get_buf(win_layout[2]) }
 	elseif win_layout[1] == "col" or win_layout[1] == "row" then
 		local subwin_layouts = {}

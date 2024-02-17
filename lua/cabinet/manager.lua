@@ -4,6 +4,7 @@ local Drawer = require("cabinet.drawer")
 ---@class Manager
 ---@field drawers table<Drawer> @List of drawers managed by the manager.
 ---@field current_handle number @Handle of the current drawer.
+---@field id string @ID of the manager for differentiating between nvim instances.
 local Manager = {}
 
 ---@return Manager
@@ -14,6 +15,7 @@ function Manager:new()
 	local manager = {
 		drawers = drawers,
 		current_handle = 1,
+		id = utils.uuid(),
 	}
 	self.__index = self
 	return setmetatable(manager, self)

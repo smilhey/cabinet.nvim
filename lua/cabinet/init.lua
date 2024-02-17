@@ -17,12 +17,12 @@ local Manager = require("cabinet.manager")
 local M = {}
 
 function M:setup()
+	M.drawer_manager = Manager:new()
 	local cache = vim.fn.stdpath("cache")
-	if vim.fn.isdirectory(cache .. "/cabinet/active") == 0 then
-		vim.fn.mkdir(cache .. "/cabinet/active", "p")
+	if vim.fn.isdirectory(cache .. "/cabinet/active/" .. M.drawer_manager.id) == 0 then
+		vim.fn.mkdir(cache .. "/cabinet/active/" .. M.drawer_manager.id, "p")
 	end
 
-	M.drawer_manager = Manager:new()
 	require("cabinet.autocmd")
 	require("cabinet.usercmd").setup(self)
 end
