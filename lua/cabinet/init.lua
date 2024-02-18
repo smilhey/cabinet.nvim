@@ -29,9 +29,8 @@ end
 
 function M.drawer_create(name)
 	name = name or nil
-	if type(name) ~= "string" and type(name) ~= "nil" then
-		error("Drawer name must be a string or nil")
-	end
+	assert(type(name) == nil or type(name) == "string", "Drawer name can't be empty string")
+	assert(name ~= "", "Drawer name can't be empty string")
 	if M.drawer_manager:is_name_available(name) then
 		M.drawer_manager:create_drawer(name)
 	else
@@ -40,12 +39,8 @@ function M.drawer_create(name)
 end
 
 function M.drawer_select(name)
-	if type(name) ~= "string" then
-		error("Drawer name must be a string")
-	end
-	if name == "" then
-		error("Drawer name can't be empty string")
-	end
+	assert(type(name) == "string", "Drawer name must be a string")
+	assert(name ~= "", "Drawer name can't be empty string")
 
 	if not M.drawer_manager:is_name_available(name) then
 		local handle = M.drawer_manager:get_drawer(name).handle
@@ -56,12 +51,8 @@ function M.drawer_select(name)
 end
 
 function M.drawer_delete(name)
-	if type(name) ~= "string" then
-		error("Drawer name must be a string")
-	end
-	if name == "" then
-		error("Drawer name can't be empty string")
-	end
+	assert(type(name) == "string", "Drawer name must be a string")
+	assert(name ~= "", "Drawer name can't be empty string")
 	if not M.drawer_manager:is_name_available(name) then
 		local handle = M.drawer_manager:get_drawer(name).handle
 		M.drawer_manager:delete_drawer(handle)
@@ -71,12 +62,8 @@ function M.drawer_delete(name)
 end
 
 function M.drawer_rename(old_name, new_name)
-	if type(old_name) ~= "string" or type(new_name) ~= "string" then
-		error("Drawer name must be a string")
-	end
-	if old_name == "" or new_name == "" then
-		error("Drawer name can't be empty string")
-	end
+	assert(type(old_name) == "string" and type(new_name) == "string", "Drawer name must be a string")
+	assert(old_name ~= "" and new_name ~= "", "Drawer name can't be empty string")
 	if M.drawer_manager:is_name_available(new_name) then
 		M.drawer_manager:get_drawer(old_name):rename(new_name)
 	else
