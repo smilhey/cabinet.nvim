@@ -1,23 +1,21 @@
 Cabinet
 
 Cabinet is a plugin for Neovim that allows you to manage your buffers in drawers.
-Features
+Features : 
 
-    Organize your buffers into different drawers.
-    Switch easily between drawers.
-    Create, rename, delete drawers.
-    Move buffers between drawers.
-    Save and restore layouts for each drawer.
-    Integrate with Telescope for easy drawer selection.
-    Exposes an API for advanced customization.
+- Organize your buffers into different drawers.
+- Switch easily between drawers.
+- Create, rename, delete drawers.
+- Move buffers between drawers.
+- Tries to be as unobtrusive as possible 
+- A telescope pickers
+- Exposes an API for some customization
 
 Installation
 
-You can install Cabinet using your preferred plugin manager. For example, using vim-plug:
+You can install Cabinet using your preferred plugin manager. With lazy: 
 
-vim
-
-Plug 'username/cabinet'
+    return {"smilhey/cabinet"}
 
 Then, reload your Neovim configuration and run :PlugInstall to install the plugin.
 Usage
@@ -139,50 +137,62 @@ Get the current drawer manager instance.
 
 Returns the current drawer manager instance, allowing external modules or scripts to access and interact with the Cabinet drawer manager directly.
 
+#### User Events: 
+
+The plugin emits the following user events that you can listen for and respond to in your Neovim configuration: 
+
+- "DrawLeave" : Emitted when the user leaves a drawer, any buffer added at this point will belong to the next drawer. data = {previous_drawnm, next_drawnm}
+
+- "DrawAdd" : Emitted when a new drawer is created. data = {new_drawnm}
+
+- "DrawNewEnter" : Emitted when the user enters the name of a new drawer. data = {previous_drawnm, new_drawnm}
+
+- "DrawEnter" : Emitted when the user enters an existing drawer after the layout and window information has been restored. data = {previous_drawnm, new_drawnm}
+
+Here are some ways you could use those events  
 
 Config example : 
 
+    return {
+        dir = "~/Misc/cabinet.nvim",
+        config = function()
+            local cabinet = require("cabinet")
+            cabinet:setup({ initial_drawers = { "bar", "foo" }, usercmd = false })
+            require("telescope").load_extension("cabinet")
 
-return {
-	dir = "~/Misc/cabinet.nvim",
-	config = function()
-		local cabinet = require("cabinet")
-		cabinet:setup({ initial_drawers = { "bar", "foo" }, usercmd = false })
-		require("telescope").load_extension("cabinet")
+            vim.api.nvim_create_autocmd("User", {
+                nested = true,
+                pattern = "DrawAdd",
+                callback = function(event)
+                    -- This is the name of the new drawer
+                    local new_drawnm = event.data
+                    cabinet.drawer_select(new_drawnm)
+                end,
+            })
 
-		vim.api.nvim_create_autocmd("User", {
-			nested = true,
-			pattern = "DrawAdd",
-			callback = function(event)
-				-- This is the name of the new drawer
-				local new_drawnm = event.data
-				cabinet.drawer_select(new_drawnm)
-			end,
-		})
+            -- vim.api.nvim_create_autocmd("User", {
+            -- 	nested = true,
+            -- 	pattern = "DrawNewEnter",
+            -- 	callback = function(event)
+            -- 		vim.cmd("term")
+            -- 	end,
+            -- })
 
-		-- vim.api.nvim_create_autocmd("User", {
-		-- 	nested = true,
-		-- 	pattern = "DrawNewEnter",
-		-- 	callback = function(event)
-		-- 		vim.cmd("term")
-		-- 	end,
-		-- })
-
-		vim.keymap.set("n", "<leader>dp", function()
-			vim.cmd("DrawerPrevious")
-		end)
-		vim.keymap.set("n", "<leader>dn", function()
-			vim.cmd("DrawerNext")
-		end)
-		vim.keymap.set("n", "<leader>dc", function()
-			vim.cmd("DrawerNew")
-		end)
-		vim.keymap.set("n", "<leader>dr", function()
-			vim.cmd("DrawerRename")
-		end)
-		vim.keymap.set("n", "<leader>dt", function()
-			vim.cmd("Telescope cabinet")
-		end)
-	end,
-}
+            vim.keymap.set("n", "<leader>dp", function()
+                vim.cmd("DrawerPrevious")
+            end)
+            vim.keymap.set("n", "<leader>dn", function()
+                vim.cmd("DrawerNext")
+            end)
+            vim.keymap.set("n", "<leader>dc", function()
+                vim.cmd("DrawerNew")
+            end)
+            vim.keymap.set("n", "<leader>dr", function()
+                vim.cmd("DrawerRename")
+            end)
+            vim.keymap.set("n", "<leader>dt", function()
+                vim.cmd("Telescope cabinet")
+            end)
+        end,
+    }
 
