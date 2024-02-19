@@ -1,3 +1,5 @@
+# Cabinet
+
 cabinet.nvim is a plugin for Neovim that allows you to manage your 
 buffers in an object called drawer, cabinet tries to be as unobtrusive as possible.
 
