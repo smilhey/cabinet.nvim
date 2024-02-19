@@ -15,7 +15,7 @@ function Manager:new()
 	local manager = {
 		drawers = drawers,
 		current_handle = 1,
-		id = utils.uuid(),
+		id = utils.date(),
 	}
 	self.__index = self
 	return setmetatable(manager, self)
@@ -58,21 +58,23 @@ function Manager:switch_drawer(handle)
 			data = { previous_drawer.name, next_drawer.name },
 		})
 		previous_drawer:save_session()
-		previous_drawer:save_jump()
+		previous_drawer:save_layout()
+		previous_drawer:save_qflist()
 		previous_drawer:close()
 
 		self.current_handle = handle
 		if vim.tbl_isempty(next_drawer.buffers) then
-			print("manager " .. utils.win_set_scratch(0))
+			utils.win_set_scratch(0)
 			vim.cmd("clearjumps")
 			vim.api.nvim_exec_autocmds("User", {
 				pattern = "DrawNewEnter",
 				data = { previous_drawer.name, next_drawer.name },
 			})
 		else
-			next_drawer:restore_session()
 			next_drawer:open()
-			next_drawer:restore_jump()
+			next_drawer:restore_qflist()
+			next_drawer:restore_session()
+			next_drawer:restore_layout()
 			vim.api.nvim_exec_autocmds("User", {
 				pattern = "DrawEnter",
 				data = { previous_drawer.name, next_drawer.name },

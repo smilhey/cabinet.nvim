@@ -19,8 +19,8 @@ local M = {}
 function M:setup()
 	M.drawer_manager = Manager:new()
 	local cache = vim.fn.stdpath("cache")
-	if vim.fn.isdirectory(cache .. "/cabinet/active/" .. M.drawer_manager.id) == 0 then
-		vim.fn.mkdir(cache .. "/cabinet/active/" .. M.drawer_manager.id, "p")
+	if vim.fn.isdirectory(cache .. "/cabinet/" .. M.drawer_manager.id) == 0 then
+		vim.fn.mkdir(cache .. "/cabinet/" .. M.drawer_manager.id, "p")
 	end
 
 	require("cabinet.autocmd")
@@ -29,8 +29,7 @@ end
 
 function M.drawer_create(name)
 	name = name or nil
-	assert(type(name) == nil or type(name) == "string", "Drawer name can't be empty string")
-	assert(name ~= "", "Drawer name can't be empty string")
+	assert(type(name) == "nil" or type(name) == "string", "Drawer must be a string or nil")
 	if M.drawer_manager:is_name_available(name) then
 		M.drawer_manager:create_drawer(name)
 	else

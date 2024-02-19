@@ -1,5 +1,9 @@
 local M = {}
 
+function M.date()
+	return os.date("%Y-%m-%d_%H:%M:%S")
+end
+
 function M.uuid()
 	math.randomseed(os.clock())
 	local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"

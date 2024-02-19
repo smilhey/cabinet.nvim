@@ -36,6 +36,6 @@ autocmd("UILeave", {
 	callback = function()
 		local instance = drawer_manager.id
 		local cache = vim.fn.stdpath("cache")
-		vim.cmd("!rm " .. cache .. "/cabinet/active/" .. instance .. "/*")
+		vim.cmd("!rm -rf" .. cache .. "/cabinet/" .. instance)
 	end,
 })
