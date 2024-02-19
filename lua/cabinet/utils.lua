@@ -21,7 +21,6 @@ function M.find_buffer_by_name(name)
 			return buf
 		end
 	end
-	return -1
 end
 
 function M.win_set_scratch(window)
