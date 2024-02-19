@@ -57,7 +57,7 @@ function Manager:switch_drawer(handle)
 			pattern = "DrawLeave",
 			data = { previous_drawer.name, next_drawer.name },
 		})
-		previous_drawer:save_session()
+		previous_drawer:save_session(self.id)
 		previous_drawer:save_layout()
 		previous_drawer:save_qflist()
 		previous_drawer:close()
@@ -73,7 +73,7 @@ function Manager:switch_drawer(handle)
 		else
 			next_drawer:open()
 			next_drawer:restore_qflist()
-			next_drawer:restore_session()
+			next_drawer:restore_session(self.id)
 			next_drawer:restore_layout()
 			vim.api.nvim_exec_autocmds("User", {
 				pattern = "DrawEnter",

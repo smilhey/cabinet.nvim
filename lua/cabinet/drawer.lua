@@ -141,7 +141,8 @@ function Drawer:restore_layout()
 		local win_layout = vim.fn.winlayout(i)
 		layout.restore(t, win_layout, self.tabs_layout[i])
 	end
-	for _, win in ipairs(vim.api.nvim_tabpage_list_wins(self.current_wininfo.tabnr)) do
+	local tabpage = vim.api.nvim_list_tabpages()[self.current_wininfo.tabnr]
+	for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
 		if vim.api.nvim_win_get_buf(win) == self.current_wininfo.buffer then
 			vim.api.nvim_set_current_win(win)
 			vim.api.nvim_win_set_cursor(win, self.current_wininfo.curpos)

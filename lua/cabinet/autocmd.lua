@@ -34,8 +34,7 @@ autocmd("UIEnter", {
 autocmd("UILeave", {
 	group = cabinet_augroup,
 	callback = function()
-		local instance = drawer_manager.id
 		local cache = vim.fn.stdpath("cache")
-		vim.cmd("!rm -rf" .. cache .. "/cabinet/" .. instance)
+		vim.cmd("silent !rmdir " .. cache .. "/cabinet/" .. drawer_manager.id)
 	end,
 })
