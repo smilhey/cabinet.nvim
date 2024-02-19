@@ -1,13 +1,16 @@
-cabinet.nvim is a plugin for Neovim that allows you to manage your buffers in drawers.
+cabinet.nvim is a plugin for Neovim that allows you to manage your 
+buffers in an object called drawer, cabinet tries to be as unobtrusive as possible.
+
+The goal is to add a level of grouping and organization to your buffers without 
+change how you you navigate them.
 
 ### Features : 
 
-- Organize your buffers into different drawers.
+- Organize your buffers into different drawers with separate quickfixlists, jumplists, directory. 
 - Switch easily between drawers.
 - Create, rename, delete drawers.
 - Move buffers between drawers.
-- Tries to be as unobtrusive as possible 
-- A telescope pickers
+- A telescope picker
 - Exposes an API for some customization
 
 ### Installation
@@ -30,7 +33,7 @@ With Lazy :
 
     :Drawer [name] - Switch to a specific drawer.
     :DrawerNew [name] - Create a new drawer with an optional name.
-    :DrawerRename - Will promput for a new name for the current drawer.
+    :DrawerRename - Will prompt you for a new name for the current drawer.
     :DrawerDelete [name] - Delete a drawer.
     :DrawerList - List all drawers.
     :DrawerPrevious - Switch to the previous drawer.
@@ -38,7 +41,7 @@ With Lazy :
 
 #### Buffer Management
 
-    :DrawerListBuffers - List all buffers in the current drawer.
+    :DrawerListBuffers - List all buffers in the current drawer even the unlisted ones. Otherwise ls is sufficent.
     :DrawerBufMove [drawer_name] - Move the current buffer to a different drawer.
 
 #### Telescope Integration
