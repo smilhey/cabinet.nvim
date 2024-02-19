@@ -4,8 +4,6 @@ local conf = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 
-local drawer_manager = require("cabinet").drawer_manager
-
 -- Return a picker for the available drawers
 local function picker(opts)
 	if #opts == 0 then
@@ -17,7 +15,7 @@ local function picker(opts)
 		actions.select_default:replace(function()
 			actions.close(prompt_bufnr)
 			local selection = action_state.get_selected_entry()
-			drawer_manager:switch_drawer(selection.value)
+			require("cabinet").drawer_select(selection.value)
 		end)
 		return true
 	end
