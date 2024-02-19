@@ -1,7 +1,6 @@
-Cabinet
+cabinet.nvim is a plugin for Neovim that allows you to manage your buffers in drawers.
 
-Cabinet is a plugin for Neovim that allows you to manage your buffers in drawers.
-Features : 
+##Features : 
 
 - Organize your buffers into different drawers.
 - Switch easily between drawers.
@@ -11,15 +10,23 @@ Features :
 - A telescope pickers
 - Exposes an API for some customization
 
-Installation
+##Installation
 
-You can install Cabinet using your preferred plugin manager. With lazy: 
+You can install Cabinet using your preferred plugin manager. You need to at least call setup for the plugin to work.
 
-    return {"smilhey/cabinet"}
+With Lazy :
 
-Then, reload your Neovim configuration and run :PlugInstall to install the plugin.
-Usage
-Basic Commands
+    return {
+        "smilhey/cabinet", 
+        config = function () 
+            local cabinet = require("cabinet")
+            cabinet:setup()
+        end
+    }
+
+##Usage
+
+###Basic Commands
 
     :Drawer [name] - Switch to a specific drawer.
     :DrawerNew [name] - Create a new drawer with an optional name.
@@ -29,24 +36,16 @@ Basic Commands
     :DrawerPrevious - Switch to the previous drawer.
     :DrawerNext - Switch to the next drawer.
 
-Buffer Management
+###Buffer Management
 
     :DrawerListBuffers - List all buffers in the current drawer.
     :DrawerBufMove [drawer_name] - Move the current buffer to a different drawer.
 
-Telescope Integration
+###Telescope Integration
 
 Use Telescope to select drawers easily:
 
     :Telescope cabinet
-
-Configuration
-
-You can customize Cabinet by setting up additional options in your Neovim configuration file. Two fields for now : 
-    
-    initial_drawers - A list of names for the drawers you want nvim to start with 
-    usercmds - A boolean to enable or disable the user commands (default is true)
-
 
 ## Exposed API
 
@@ -151,7 +150,7 @@ The plugin emits the following user events that you can listen for and respond t
 
 Here are some ways you could use those events  
 
-Config example : 
+####Config example : 
 
     return {
         dir = "~/Misc/cabinet.nvim",
