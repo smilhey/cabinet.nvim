@@ -1,6 +1,8 @@
 local U = {}
 local user_command = vim.api.nvim_create_user_command
 
+---comment
+---@param M table @The cabinet module
 function U.setup(M)
 	local complete_function = function(ArgLead, _, _)
 		local completion_list = vim.tbl_filter(function(v)
@@ -73,6 +75,15 @@ function U.setup(M)
 			print(drawer)
 		end
 	end, {})
+	user_command("DrawerBufMove", function(opts)
+		local buffer = vim.api.nvim_get_current_buf()
+		local drawnm_from = M.drawer_current()
+		if opts.args == nil or opts.args == "" then
+			return
+		else
+			M.buf_move(buffer, drawnm_from, opts.args)
+		end
+	end, { nargs = "?", complete = complete_function })
 end
 
 return U

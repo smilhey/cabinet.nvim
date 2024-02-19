@@ -27,36 +27,42 @@ function M:setup()
 	require("cabinet.usercmd").setup(self)
 end
 
-function M.drawer_create(name)
-	name = name or nil
-	assert(type(name) == "nil" or type(name) == "string", "Drawer must be a string or nil")
-	if M.drawer_manager:is_name_available(name) then
-		M.drawer_manager:create_drawer(name)
+function M.drawer_create(drawnm)
+	drawnm = drawnm or nil
+	assert(type(drawnm) == "nil" or type(drawnm) == "string", "Drawer must be a string or nil")
+	if M.drawer_manager:is_name_available(drawnm) then
+		M.drawer_manager:create_drawer(drawnm)
+		return true
 	else
-		print("Drawer " .. name .. " already exists")
+		print("Drawer " .. drawnm .. " already exists")
+		return false
 	end
 end
 
-function M.drawer_select(name)
-	assert(type(name) == "string", "Drawer name must be a string")
-	assert(name ~= "", "Drawer name can't be empty string")
+function M.drawer_select(drawnm)
+	assert(type(drawnm) == "string", "Drawer drawnm must be a string")
+	assert(drawnm ~= "", "Drawer drawnm can't be empty string")
 
-	if not M.drawer_manager:is_name_available(name) then
-		local handle = M.drawer_manager:get_drawer(name).handle
+	if not M.drawer_manager:is_name_available(drawnm) then
+		local handle = M.drawer_manager:get_drawer(drawnm).handle
 		M.drawer_manager:switch_drawer(handle)
+		return true
 	else
-		print("Drawer " .. name .. " does not exist")
+		print("Drawer " .. drawnm .. " does not exist")
+		return false
 	end
 end
 
-function M.drawer_delete(name)
-	assert(type(name) == "string", "Drawer name must be a string")
-	assert(name ~= "", "Drawer name can't be empty string")
-	if not M.drawer_manager:is_name_available(name) then
-		local handle = M.drawer_manager:get_drawer(name).handle
+function M.drawer_delete(drawnm)
+	assert(type(drawnm) == "string", "Drawer name must be a string")
+	assert(drawnm ~= "", "Drawer name can't be empty string")
+	if not M.drawer_manager:is_name_available(drawnm) then
+		local handle = M.drawer_manager:get_drawer(drawnm).handle
 		M.drawer_manager:delete_drawer(handle)
+		return true
 	else
-		print("Drawer " .. name .. " does not exist")
+		print("Drawer " .. drawnm .. " does not exist")
+		return false
 	end
 end
 
@@ -65,8 +71,10 @@ function M.drawer_rename(old_name, new_name)
 	assert(old_name ~= "" and new_name ~= "", "Drawer name can't be empty string")
 	if M.drawer_manager:is_name_available(new_name) then
 		M.drawer_manager:get_drawer(old_name):rename(new_name)
+		return true
 	else
 		print("Drawer name already exists")
+		return false
 	end
 end
 
@@ -100,15 +108,33 @@ function M.drawer_current()
 	return M.drawer_manager:get_current_drawer().name
 end
 
--- TODO : how to handle buffer moves between drawers
--- User would want to move to the group with the buffer
--- this implies cleaning up the state of the drawer (jumplists and sessions)
-function M.buf_move(buffer, name)
-	local current_drawer = M.drawer_manager:get_current_drawer()
-	local target_drawer = M.drawer_manager:get_drawer(name)
-	M.drawer_manager:switch_drawer(target_drawer.handle)
-	current_drawer:del_buffer(buffer)
-	target_drawer:add_buffer(buffer)
+function M.buf_move(buffer, drawnm_from, drawnm_to)
+	assert(
+		vim.bo[buffer].bufhidden ~= "wipe" and vim.bo[buffer].bufhidden ~= "unload",
+		"Buftype must be different from wipe and unload"
+	)
+	local drawer_from = M.drawer_manager:get_drawer(drawnm_from)
+	local drawer_to = M.drawer_manager:get_drawer(drawnm_to)
+	local current_drawnm = M.drawer_current()
+	if not M.drawer_select(drawnm_from) then
+		return
+	end
+	local windows = vim.fn.getbufinfo(buffer)[1].windows
+	for _, win in ipairs(windows) do
+		if #drawer_from:list_buffers() == 1 then
+			print("Can't move the only buffer of the Drawer")
+			return
+		else
+			vim.api.nvim_set_current_win(win)
+			drawer_to:add_buffer(buffer)
+			vim.schedule(function()
+				vim.cmd("bp")
+				vim.bo[buffer].buflisted = false
+			end)
+		end
+	end
+	drawer_from:del_buffer(buffer)
+	M.drawer_select(current_drawnm)
 end
 
 return M

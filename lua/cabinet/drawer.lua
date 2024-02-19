@@ -104,6 +104,7 @@ function Drawer:save_layout()
 	end
 end
 
+---@param manager_id string
 ---Save the drawer session.
 function Drawer:save_session(manager_id)
 	if not self.session then
@@ -151,6 +152,7 @@ function Drawer:restore_layout()
 	end
 end
 
+---@param manager_id string
 ---Restore the session if it exists.
 function Drawer:restore_session(manager_id)
 	if self.session then
