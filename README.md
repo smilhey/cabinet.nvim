@@ -1,3 +1,6 @@
+
+https://github.com/smilhey/cabinet.nvim/assets/128088782/61572d78-7d54-4827-a16a-affa54d5302d
+
 # Cabinet
 
 cabinet.nvim is a plugin for Neovim that allows you to manage your 
