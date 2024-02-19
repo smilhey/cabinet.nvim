@@ -52,42 +52,41 @@ function Manager:switch_drawer(handle)
 	local next_drawer = self:get_drawer(handle)
 	local previous_drawer = self:get_current_drawer()
 
-	if next_drawer then
+	assert(next_drawer ~= "nil", "Tried to switch with invalid handle : " .. vim.inspect(handle))
+
+	previous_drawer:save_session(self.id)
+	previous_drawer:save_layout()
+	previous_drawer:save_qflist()
+	previous_drawer:close()
+	self.current_handle = handle
+
+	vim.api.nvim_exec_autocmds("User", {
+		pattern = "DrawLeave",
+		data = { previous_drawer.name, next_drawer.name },
+	})
+
+	if vim.tbl_isempty(next_drawer.buffers) then
+		utils.win_set_scratch(0)
+		vim.cmd("clearjumps")
 		vim.api.nvim_exec_autocmds("User", {
-			pattern = "DrawLeave",
+			pattern = "DrawNewEnter",
 			data = { previous_drawer.name, next_drawer.name },
 		})
-		previous_drawer:save_session(self.id)
-		previous_drawer:save_layout()
-		previous_drawer:save_qflist()
-		previous_drawer:close()
-
-		self.current_handle = handle
-		if vim.tbl_isempty(next_drawer.buffers) then
-			utils.win_set_scratch(0)
-			vim.cmd("clearjumps")
-			vim.api.nvim_exec_autocmds("User", {
-				pattern = "DrawNewEnter",
-				data = { previous_drawer.name, next_drawer.name },
-			})
-		else
-			next_drawer:open()
-			next_drawer:restore_qflist()
-			next_drawer:restore_session(self.id)
-			next_drawer:restore_layout()
-			vim.api.nvim_exec_autocmds("User", {
-				pattern = "DrawEnter",
-				data = { previous_drawer.name, next_drawer.name },
-			})
-		end
 	else
-		error("Tried to switch with invalid handle " .. vim.inspect(handle))
+		next_drawer:open()
+		next_drawer:restore_qflist()
+		next_drawer:restore_session(self.id)
+		next_drawer:restore_layout()
+		vim.api.nvim_exec_autocmds("User", {
+			pattern = "DrawEnter",
+			data = { previous_drawer.name, next_drawer.name },
+		})
 	end
 end
 
----@param name ?string @Name of the new drawer.
-function Manager:create_drawer(name)
-	local params = { name = name, handle = #self.drawers + 1 }
+---@param drawnm ?string @Name of the new drawer.
+function Manager:create_drawer(drawnm)
+	local params = { name = drawnm, handle = #self.drawers + 1 }
 	local new_drawer = Drawer:new(params)
 	table.insert(self.drawers, new_drawer)
 	vim.api.nvim_exec_autocmds("User", {
@@ -146,11 +145,11 @@ function Manager:next_drawer()
 	end
 end
 
----@param name string @A name.
+---@param drawnm string @A drawer name.
 ---@return boolean @True if the name is available, false otherwise.
-function Manager:is_name_available(name)
+function Manager:is_name_available(drawnm)
 	for _, d in ipairs(self.drawers) do
-		if d.name == name then
+		if d.name == drawnm then
 			return false
 		end
 	end

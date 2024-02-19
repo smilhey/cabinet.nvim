@@ -1,21 +1,20 @@
 local Manager = require("cabinet.manager")
 
--- TODO : Add a way for users to be able to dispatch a buffer to group
--- on the fly automatically. Think about the use of events. What would you
--- want to do before entering a drawer : for example launch some linter and stuff ...
 -- Important to precise at which point the drawer is stable so that the user
 -- can safely do stuff at that time.
 -- TODO : Add some customization for setup
 -- Initial drawer name
--- Creating a drawer with a new buffer at the same time
 -- Disabling user commands
 -- order rule ?
 -- Should be able to switch to drawers based on absolute value : meaning providing not moving list
 -- TODO : Being able to create a set of drawers on start and eventually to restore state
 -- of the drawers from previous session
 
+---Cabinet is a plugin that allows you to manage your buffers in drawers.
 local M = {}
 
+---Setup user commands and autocmds, create the manager and the cache directory to store
+--the mksession files for this nvim instance.
 function M:setup()
 	M.drawer_manager = Manager:new()
 	local cache = vim.fn.stdpath("cache")
@@ -27,6 +26,8 @@ function M:setup()
 	require("cabinet.usercmd").setup(self)
 end
 
+---@param drawnm string|nil @Name of the drawer to created : can be nil in which case the drawer will be created with a default name.
+---@return boolean @True if the drawer is created successfully (if the name is available), false otherwise.
 function M.drawer_create(drawnm)
 	drawnm = drawnm or nil
 	assert(type(drawnm) == "nil" or type(drawnm) == "string", "Drawer must be a string or nil")
@@ -39,6 +40,8 @@ function M.drawer_create(drawnm)
 	end
 end
 
+---@param drawnm string @Name of the drawer you want to switch to.
+---@return boolean @True if the switch is succesful (if the drawer exists), false otherwise.
 function M.drawer_select(drawnm)
 	assert(type(drawnm) == "string", "Drawer drawnm must be a string")
 	assert(drawnm ~= "", "Drawer drawnm can't be empty string")
@@ -53,6 +56,8 @@ function M.drawer_select(drawnm)
 	end
 end
 
+---@param drawnm string @Name of the drawer to delete.
+---@return boolean @True if the drawer is deleted successfully (if the drawer exists), false otherwise.
 function M.drawer_delete(drawnm)
 	assert(type(drawnm) == "string", "Drawer name must be a string")
 	assert(drawnm ~= "", "Drawer name can't be empty string")
@@ -66,11 +71,14 @@ function M.drawer_delete(drawnm)
 	end
 end
 
-function M.drawer_rename(old_name, new_name)
-	assert(type(old_name) == "string" and type(new_name) == "string", "Drawer name must be a string")
-	assert(old_name ~= "" and new_name ~= "", "Drawer name can't be empty string")
-	if M.drawer_manager:is_name_available(new_name) then
-		M.drawer_manager:get_drawer(old_name):rename(new_name)
+---@param old_drawnm string @Name of the drawer to rename.
+---@param new_drawnm string @New name of the drawer.
+---@return boolean @True if the drawer is renamed successfully (if the new name is available), false otherwise.
+function M.drawer_rename(old_drawnm, new_drawnm)
+	assert(type(old_drawnm) == "string" and type(new_drawnm) == "string", "Drawer name must be a string")
+	assert(old_drawnm ~= "" and new_drawnm ~= "", "Drawer name can't be empty string")
+	if M.drawer_manager:is_drawnm_available(new_drawnm) then
+		M.drawer_manager:get_drawer(old_drawnm):rename(new_drawnm)
 		return true
 	else
 		print("Drawer name already exists")
@@ -78,16 +86,19 @@ function M.drawer_rename(old_name, new_name)
 	end
 end
 
+---Switch to the previous drawer (order of creation).
 function M.drawer_previous()
 	local previous_drawer = M.drawer_manager:previous_drawer()
 	M.drawer_manager:switch_drawer(previous_drawer)
 end
 
+---Switch to the next drawer (order of creation).
 function M.drawer_next()
 	local next_drawer = M.drawer_manager:next_drawer()
 	M.drawer_manager:switch_drawer(next_drawer)
 end
 
+---@return table<number> @List of buffers managed by the current drawer excluding the ones that are not listed.
 function M.drawer_list_buffers()
 	local current_drawer = M.drawer_manager:get_current_drawer()
 	local drawer_buffer_list = current_drawer:list_buffers()
@@ -97,6 +108,7 @@ function M.drawer_list_buffers()
 	end, complete_buffer_list)
 end
 
+---@return table<string> @List of all the drawers names.
 function M.drawer_list()
 	local drawers = M.drawer_manager:get_drawers()
 	return vim.tbl_map(function(drawer)
@@ -104,10 +116,15 @@ function M.drawer_list()
 	end, drawers)
 end
 
+---@return string @Name of the current drawer.
 function M.drawer_current()
 	return M.drawer_manager:get_current_drawer().name
 end
 
+---@param buffer number @Buffer handle.
+---@param drawnm_from string @Name of the drawer to move the buffer from.
+---@param drawnm_to string @Name of the drawer to move the buffer to.
+---@return boolean @True if the buffer is moved successfully, false otherwise.
 function M.buf_move(buffer, drawnm_from, drawnm_to)
 	assert(
 		vim.bo[buffer].bufhidden ~= "wipe" and vim.bo[buffer].bufhidden ~= "unload",
@@ -117,13 +134,13 @@ function M.buf_move(buffer, drawnm_from, drawnm_to)
 	local drawer_to = M.drawer_manager:get_drawer(drawnm_to)
 	local current_drawnm = M.drawer_current()
 	if not M.drawer_select(drawnm_from) then
-		return
+		return false
 	end
 	local windows = vim.fn.getbufinfo(buffer)[1].windows
 	for _, win in ipairs(windows) do
 		if #drawer_from:list_buffers() == 1 then
 			print("Can't move the only buffer of the Drawer")
-			return
+			return false
 		else
 			vim.api.nvim_set_current_win(win)
 			drawer_to:add_buffer(buffer)
@@ -135,6 +152,7 @@ function M.buf_move(buffer, drawnm_from, drawnm_to)
 	end
 	drawer_from:del_buffer(buffer)
 	M.drawer_select(current_drawnm)
+	return true
 end
 
 return M
