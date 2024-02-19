@@ -7,11 +7,18 @@ local Drawer = require("cabinet.drawer")
 ---@field id string @ID of the manager for differentiating between nvim instances.
 local Manager = {}
 
+---@param drawnm_list table<string> @List of drawer names.
 ---@return Manager
-function Manager:new()
+function Manager:new(drawnm_list)
 	-- Initialize the drawers table with a default drawer
 	local drawers = {}
-	drawers = { Drawer:new({ handle = 1 }) }
+	if vim.tbl_isempty(drawnm_list) then
+		drawers = { Drawer:new({ handle = 1 }) }
+	else
+		for _, drawnm in ipairs(drawnm_list) do
+			table.insert(drawers, Drawer:new({ name = drawnm, handle = #drawers + 1 }))
+		end
+	end
 	local manager = {
 		drawers = drawers,
 		current_handle = 1,

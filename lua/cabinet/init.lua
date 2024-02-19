@@ -1,29 +1,29 @@
 local Manager = require("cabinet.manager")
 
--- Important to precise at which point the drawer is stable so that the user
--- can safely do stuff at that time.
--- TODO : Add some customization for setup
--- Initial drawer name
--- Disabling user commands
--- order rule ?
--- Should be able to switch to drawers based on absolute value : meaning providing not moving list
--- TODO : Being able to create a set of drawers on start and eventually to restore state
--- of the drawers from previous session
-
 ---Cabinet is a plugin that allows you to manage your buffers in drawers.
 local M = {}
 
----Setup user commands and autocmds, create the manager and the cache directory to store
---the mksession files for this nvim instance.
-function M:setup()
-	M.drawer_manager = Manager:new()
+local default_config = {
+	initial_drawers = {},
+	usercmd = true,
+}
+
+---Setup user commands and autocmds, create the manager and the cache directory to store the mksession files for this nvim instance.
+function M:setup(config)
+	config = {
+		initial_drawers = config.initial_drawers or default_config.initial_drawers,
+		usercmd = config.usercmd == nil and default_config.usercmd or config.usercmd,
+	}
+	M.drawer_manager = Manager:new(config.initial_drawers)
 	local cache = vim.fn.stdpath("cache")
 	if vim.fn.isdirectory(cache .. "/cabinet/" .. M.drawer_manager.id) == 0 then
 		vim.fn.mkdir(cache .. "/cabinet/" .. M.drawer_manager.id, "p")
 	end
 
 	require("cabinet.autocmd")
-	require("cabinet.usercmd").setup(self)
+	if config.usercmd then
+		require("cabinet.usercmd").setup(self)
+	end
 end
 
 ---@param drawnm string|nil @Name of the drawer to created : can be nil in which case the drawer will be created with a default name.
