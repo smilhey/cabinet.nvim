@@ -167,6 +167,7 @@ Here are some ways you could use those events
             cabinet:setup({ initial_drawers = { "bar", "foo" }, usercmd = false })
             require("telescope").load_extension("cabinet")
 
+            -- Switch to drawer on creation
             vim.api.nvim_create_autocmd("User", {
                 nested = true,
                 pattern = "DrawAdd",
@@ -177,6 +178,7 @@ Here are some ways you could use those events
                 end,
             })
 
+            -- Open a terminal when entering a new drawer
             -- vim.api.nvim_create_autocmd("User", {
             -- 	nested = true,
             -- 	pattern = "DrawNewEnter",

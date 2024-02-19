@@ -77,7 +77,7 @@ end
 function M.drawer_rename(old_drawnm, new_drawnm)
 	assert(type(old_drawnm) == "string" and type(new_drawnm) == "string", "Drawer name must be a string")
 	assert(old_drawnm ~= "" and new_drawnm ~= "", "Drawer name can't be empty string")
-	if M.drawer_manager:is_drawnm_available(new_drawnm) then
+	if M.drawer_manager:is_name_available(new_drawnm) then
 		M.drawer_manager:get_drawer(old_drawnm):rename(new_drawnm)
 		return true
 	else
