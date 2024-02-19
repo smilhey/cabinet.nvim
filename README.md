@@ -130,12 +130,6 @@ Move a buffer from one drawer to another.
 
 Returns `true` if the buffer is moved successfully; otherwise, `false`.
 
-#### `M.get_drawer_manager()`
-
-Get the current drawer manager instance.
-
-Returns the current drawer manager instance, allowing external modules or scripts to access and interact with the Cabinet drawer manager directly.
-
 ### User Events: 
 
 The plugin emits the following user events that you can listen for and respond to in your Neovim configuration: 
