@@ -1,6 +1,6 @@
 cabinet.nvim is a plugin for Neovim that allows you to manage your buffers in drawers.
 
-##Features : 
+### Features : 
 
 - Organize your buffers into different drawers.
 - Switch easily between drawers.
@@ -10,7 +10,7 @@ cabinet.nvim is a plugin for Neovim that allows you to manage your buffers in dr
 - A telescope pickers
 - Exposes an API for some customization
 
-##Installation
+### Installation
 
 You can install Cabinet using your preferred plugin manager. You need to at least call setup for the plugin to work.
 
@@ -24,9 +24,9 @@ With Lazy :
         end
     }
 
-##Usage
+### Usage
 
-###Basic Commands
+#### Basic Commands
 
     :Drawer [name] - Switch to a specific drawer.
     :DrawerNew [name] - Create a new drawer with an optional name.
@@ -36,22 +36,22 @@ With Lazy :
     :DrawerPrevious - Switch to the previous drawer.
     :DrawerNext - Switch to the next drawer.
 
-###Buffer Management
+#### Buffer Management
 
     :DrawerListBuffers - List all buffers in the current drawer.
     :DrawerBufMove [drawer_name] - Move the current buffer to a different drawer.
 
-###Telescope Integration
+#### Telescope Integration
 
 Use Telescope to select drawers easily:
 
     :Telescope cabinet
 
-## Exposed API
+### Exposed API
 
 Cabinet exposes a simple API for interacting with its functionality programmatically. 
 
-### Functions
+#### Functions
 
 #### `M.setup(config)`
 
@@ -136,21 +136,29 @@ Get the current drawer manager instance.
 
 Returns the current drawer manager instance, allowing external modules or scripts to access and interact with the Cabinet drawer manager directly.
 
-#### User Events: 
+### User Events: 
 
 The plugin emits the following user events that you can listen for and respond to in your Neovim configuration: 
 
-- "DrawLeave" : Emitted when the user leaves a drawer, any buffer added at this point will belong to the next drawer. data = {previous_drawnm, next_drawnm}
+#### "DrawLeave" 
 
-- "DrawAdd" : Emitted when a new drawer is created. data = {new_drawnm}
+Emitted when the user leaves a drawer, any buffer added at this point will belong to the next drawer. data = {previous_drawnm, next_drawnm}
 
-- "DrawNewEnter" : Emitted when the user enters the name of a new drawer. data = {previous_drawnm, new_drawnm}
+#### "DrawAdd" 
 
-- "DrawEnter" : Emitted when the user enters an existing drawer after the layout and window information has been restored. data = {previous_drawnm, new_drawnm}
+Emitted when a new drawer is created. data = {new_drawnm}
+
+#### "DrawNewEnter"  
+
+Emitted when the user enters the name of a new drawer. data = {previous_drawnm, new_drawnm}
+
+#### "DrawEnter" 
+
+Emitted when the user enters an existing drawer after the layout and window information has been restored. data = {previous_drawnm, new_drawnm}
 
 Here are some ways you could use those events  
 
-####Config example : 
+#### Config example : 
 
     return {
         dir = "~/Misc/cabinet.nvim",
