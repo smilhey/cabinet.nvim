@@ -105,14 +105,15 @@ end
 ---@param handle number @Handle of the drawer to delete.
 function Manager:delete_drawer(handle)
 	local drawer = self:get_drawer(handle)
+	if #self.drawers == 1 then
+		print("Can't delete the only drawer")
+		return
+	end
 	if self.current_handle == handle then
 		local previous_handle = self:previous_drawer()
 		self:switch_drawer(previous_handle)
 	else
 		drawer:close()
-	end
-	if #self.drawers == 1 then
-		vim.cmd("bd!")
 	end
 	for i, d in ipairs(self.drawers) do
 		if d.handle == handle then

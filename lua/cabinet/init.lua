@@ -10,6 +10,7 @@ local default_config = {
 
 ---Setup user commands and autocmds, create the manager and the cache directory to store the mksession files for this nvim instance.
 function M:setup(config)
+	local config = config or {}
 	config = {
 		initial_drawers = config.initial_drawers or default_config.initial_drawers,
 		usercmd = config.usercmd == nil and default_config.usercmd or config.usercmd,
