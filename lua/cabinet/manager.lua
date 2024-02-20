@@ -95,6 +95,7 @@ function Manager:switch_drawer(handle)
 end
 
 ---@param drawnm ?string @Name of the new drawer.
+---@return number @Handle of the new drawer.
 function Manager:create_drawer(drawnm)
 	local params = { name = drawnm, handle = #self.drawers + 1 }
 	local new_drawer = Drawer:new(params)
@@ -103,6 +104,7 @@ function Manager:create_drawer(drawnm)
 		pattern = "DrawAdd",
 		data = new_drawer.name,
 	})
+	return new_drawer.handle
 end
 
 ---@param handle number @Handle of the drawer to delete.
@@ -111,13 +113,14 @@ function Manager:delete_drawer(handle)
 	if #self.drawers == 1 then
 		print("Can't delete the only drawer")
 		return
-	end
-	if self.current_handle == handle then
-		local previous_handle = self:previous_drawer()
-		self:switch_drawer(previous_handle)
 	else
+		if self.current_handle == handle then
+			local previous_handle = self:previous_drawer()
+			self:switch_drawer(previous_handle)
+		end
 		drawer:close()
 	end
+
 	for i, d in ipairs(self.drawers) do
 		if d.handle == handle then
 			table.remove(self.drawers, i)

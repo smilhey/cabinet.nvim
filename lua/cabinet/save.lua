@@ -1,4 +1,5 @@
 local cabinet = require("cabinet")
+local utils = require("cabinet.utils")
 local M = {}
 local cache = vim.fn.stdpath("cache") .. "/cabinet/"
 
@@ -26,14 +27,26 @@ function M.restore_cabinet(saved_manager)
 		d:rename("~" .. d.name)
 	end
 	manager.current_handle = -manager.current_handle
+	vim.cmd("silent tabonly")
+	vim.cmd("silent only")
+	utils.win_set_scratch(0)
+
+	for _, buffer in ipairs(vim.api.nvim_list_bufs()) do
+		vim.api.nvim_buf_delete(buffer, { force = true })
+	end
+
 	for _, d in ipairs(saved_manager.drawers) do
-		manager:create_drawer(d.name)
-		cabinet.drawer_select(d.name)
+		local handle = manager:create_drawer(d.name)
+		manager:switch_drawer(handle)
 		vim.cmd("silent source " .. cache .. "saved/" .. saved_manager.id .. "/drawer." .. d.session)
 	end
+
 	for _, d in ipairs(manager.drawers) do
 		if d.handle < 0 then
-			manager:delete_drawer(d.handle)
+			print("delete " .. d.handle)
+			vim.schedule(function()
+				manager:delete_drawer(d.handle)
+			end)
 		end
 	end
 end
@@ -56,6 +69,10 @@ function M.load_cmd()
 		return completion_list
 	end
 	vim.api.nvim_create_user_command("CabinetLoad", function(opts)
+		if opts.args == nil or opts.args == "" then
+			print("No backup specified")
+			return
+		end
 		local manager_file = vim.fn.readfile(cache .. "saved/" .. opts.args .. "/manager")
 		local manager = vim.json.decode(manager_file[1])
 		M.restore_cabinet(manager)

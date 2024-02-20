@@ -72,8 +72,7 @@ function Drawer:open()
 	end
 end
 
----Unlist all buffers managed by the drawer and cleaning up the unloaded ones
----then resets the window and tab layout
+---Unlist all buffers managed by the drawer cleaning up the unloaded ones
 function Drawer:close()
 	self.buffers = vim.tbl_filter(function(buffer)
 		return vim.api.nvim_buf_is_loaded(buffer)
