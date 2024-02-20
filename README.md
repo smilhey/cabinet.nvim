@@ -207,3 +207,18 @@ Here are some ways you could use those events
         end,
     }
 
+### Experimental Features
+
+Cabinet should also allow to backup it's current state and reload it. To enable this use, add to the config function 
+
+		local save = require("cabinet.save")
+		save.save_cmd()
+		save.load_cmd()
+
+this will add the commands :CabinetSave and :CabinetLoad. 
+
+- CabinetSave will save only the current drawers name with their buffers and the windows layout.  
+- CabinetLoad will restore the state. This cmd will wipeout the currents buffers !
+    :CabinetLoad [date] - Will restore the state at the given date. 
+
+The date format is the one returned by os.date("%Y-%m-%d-%H-%M-%S") and is the name of the folder saved in the $HOME/.cache/nvim/cabinet/saved.
