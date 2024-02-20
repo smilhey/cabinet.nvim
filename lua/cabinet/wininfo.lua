@@ -19,6 +19,7 @@ function WinInfo:get(tabnr, window)
 		jumplist = vim.fn.getjumplist(window, tabnr),
 		loclist = vim.fn.getloclist(window),
 		curpos = vim.api.nvim_win_get_cursor(window),
+		cwd = vim.fn.getcwd(window, tabnr),
 	}
 	self.__index = self
 	return setmetatable(wininfo, self)
