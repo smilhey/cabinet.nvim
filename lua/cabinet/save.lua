@@ -43,7 +43,6 @@ function M.restore_cabinet(saved_manager)
 
 	for _, d in ipairs(manager.drawers) do
 		if d.handle < 0 then
-			print("delete " .. d.handle)
 			vim.schedule(function()
 				manager:delete_drawer(d.handle)
 			end)
