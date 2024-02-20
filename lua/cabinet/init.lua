@@ -99,10 +99,10 @@ function M.drawer_next()
 	M.drawer_manager:switch_drawer(next_drawer)
 end
 
----@return table<number> @List of buffers managed by the current drawer excluding the ones that are not listed.
-function M.drawer_list_buffers()
-	local current_drawer = M.drawer_manager:get_current_drawer()
-	local drawer_buffer_list = current_drawer:list_buffers()
+---@return table<number> @List of buffers managed by the current drawer including the ones that are not listed.
+function M.drawer_list_buffers(drawnm)
+	local drawer = M.drawer_manager:get_drawer(drawnm)
+	local drawer_buffer_list = drawer:list_buffers()
 	local complete_buffer_list = vim.api.nvim_list_bufs()
 	return vim.tbl_filter(function(buffer)
 		return vim.tbl_contains(drawer_buffer_list, buffer)

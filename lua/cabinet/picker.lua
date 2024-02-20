@@ -1,5 +1,6 @@
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
+local previewers = require("telescope.previewers")
 local conf = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
@@ -24,6 +25,21 @@ local function picker(opts)
 			prompt_title = "Drawers",
 			finder = finders.new_table({
 				results = available_drawers,
+			}),
+			previewer = previewers.new_buffer_previewer({
+				title = "Buffers",
+				define_preview = function(self, entry, status)
+					local buffers = require("cabinet").drawer_list_buffers(entry.value)
+					vim.api.nvim_buf_set_lines(
+						self.state.bufnr,
+						0,
+						-1,
+						false,
+						vim.tbl_map(function(bufnr)
+							return vim.api.nvim_buf_get_name(bufnr)
+						end, buffers)
+					)
+				end,
 			}),
 			sorter = conf.generic_sorter(opts),
 			attach_mappings = attach_mappings,

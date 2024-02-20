@@ -60,7 +60,8 @@ function U.setup(M)
 	user_command("DrawerNext", M.drawer_next, {})
 
 	user_command("DrawerListBuffers", function()
-		for _, buffer in ipairs(M.drawer_list_buffers()) do
+		local current_drawnm = M.drawer_current()
+		for _, buffer in ipairs(M.drawer_list_buffers(current_drawnm)) do
 			local bufname = vim.api.nvim_buf_get_name(buffer)
 			local listed = " "
 			if vim.bo[buffer].buflisted == false then
