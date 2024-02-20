@@ -25,7 +25,7 @@ You can install Cabinet using your preferred plugin manager. You need to at leas
 With Lazy :
 
     return {
-        "smilhey/cabinet", 
+        "smilhey/cabinet.nvim", 
         config = function () 
             local cabinet = require("cabinet")
             cabinet:setup()
