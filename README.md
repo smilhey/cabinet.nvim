@@ -112,7 +112,8 @@ Switch to the next drawer in the order of creation.
 
 #### `M.drawer_list_buffers()`
 
-Get a list of buffers managed by the current drawer, excluding those that are not listed.
+Get a list of buffers managed by the current drawer, there should be no 
+unlisted buffer in this list unless something wrong happened.
 
 Returns a table containing the buffer numbers.
 
