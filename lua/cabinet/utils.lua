@@ -29,4 +29,8 @@ function M.win_set_scratch(window)
 	return temp
 end
 
+function M.table_to_string(tbl)
+    return table.concat(tbl, "\n")
+end
+
 return M

@@ -39,7 +39,7 @@ function M.drawer_create(drawnm)
 		M.drawer_manager:create_drawer(drawnm)
 		return true
 	else
-		print("Drawer " .. drawnm .. " already exists")
+		vim.notify("Drawer " .. drawnm .. " already exists", vim.log.levels.WARN)
 		return false
 	end
 end
@@ -55,7 +55,7 @@ function M.drawer_select(drawnm)
 		M.drawer_manager:switch_drawer(handle)
 		return true
 	else
-		print("Drawer " .. drawnm .. " does not exist")
+		vim.notify("Drawer " .. drawnm .. " does not exist", vim.log.levels.ERROR)
 		return false
 	end
 end
@@ -70,7 +70,7 @@ function M.drawer_delete(drawnm)
 		M.drawer_manager:delete_drawer(handle)
 		return true
 	else
-		print("Drawer " .. drawnm .. " does not exist")
+		vim.notify("Drawer " .. drawnm .. " does not exist", vim.log.levels.ERROR)
 		return false
 	end
 end
@@ -85,7 +85,7 @@ function M.drawer_rename(old_drawnm, new_drawnm)
 		M.drawer_manager:get_drawer(old_drawnm):rename(new_drawnm)
 		return true
 	else
-		print("Drawer name already exists")
+		vim.notify("Drawer name already exists", vim.log.levels.WARN)
 		return false
 	end
 end
@@ -143,7 +143,7 @@ function M.buf_move(buffer, drawnm_from, drawnm_to)
 	local windows = vim.fn.getbufinfo(buffer)[1].windows
 	for _, win in ipairs(windows) do
 		if #drawer_from:list_buffers() == 1 then
-			print("Can't move the only buffer of the Drawer")
+			vim.notify("Can't move the only buffer of the Drawer", vim.log.levels.ERROR)
 			return false
 		else
 			vim.api.nvim_set_current_win(win)

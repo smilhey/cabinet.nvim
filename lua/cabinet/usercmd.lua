@@ -1,5 +1,6 @@
 local U = {}
 local user_command = vim.api.nvim_create_user_command
+local utils = require("cabinet.utils")
 
 ---comment
 ---@param M table @The cabinet module
@@ -61,20 +62,25 @@ function U.setup(M)
 
 	user_command("DrawerListBuffers", function()
 		local current_drawnm = M.drawer_current()
+        local list = {}
 		for _, buffer in ipairs(M.drawer_list_buffers(current_drawnm)) do
 			local bufname = vim.api.nvim_buf_get_name(buffer)
 			local listed = " "
 			if vim.bo[buffer].buflisted == false then
 				listed = "u"
 			end
-			print(buffer .. " " .. listed .. " " .. bufname)
+            local str =  buffer .. " " .. listed .. " " .. bufname
+			table.insert(list, str)
 		end
+        vim.notify(utils.table_to_string(list), vim.log.levels.INFO)
 	end, {})
 
 	user_command("DrawerList", function()
+        local list = {}
 		for _, drawer in ipairs(M.drawer_list()) do
-			print(drawer)
+			table.insert(list, drawer)
 		end
+        vim.notify(utils.table_to_string(list), vim.log.levels.INFO)
 	end, {})
 	user_command("DrawerBufMove", function(opts)
 		local buffer = vim.api.nvim_get_current_buf()

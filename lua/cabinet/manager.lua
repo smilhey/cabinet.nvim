@@ -111,7 +111,7 @@ end
 function Manager:delete_drawer(handle)
 	local drawer = self:get_drawer(handle)
 	if #self.drawers == 1 then
-		print("Can't delete the only drawer")
+		vim.notify("Can't delete the only drawer", vim.log.levels.ERROR)
 		return
 	else
 		if self.current_handle == handle then

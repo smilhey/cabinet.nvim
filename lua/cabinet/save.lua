@@ -69,7 +69,7 @@ function M.load_cmd()
 	end
 	vim.api.nvim_create_user_command("CabinetLoad", function(opts)
 		if opts.args == nil or opts.args == "" then
-			print("No backup specified")
+			vim.log.levels("No backup specified", vim.log.levels.ERROR)
 			return
 		end
 		local manager_file = vim.fn.readfile(cache .. "saved/" .. opts.args .. "/manager")
