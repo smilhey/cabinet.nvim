@@ -25,7 +25,7 @@ You can install Cabinet using your preferred plugin manager. You need to at leas
 With Lazy :
 
     return {
-        "smilhey/cabinet", 
+        "smilhey/cabinet.nvim", 
         config = function () 
             local cabinet = require("cabinet")
             cabinet:setup()
@@ -163,7 +163,7 @@ Here are some ways you could use those events
 #### Config example : 
 
     return {
-        dir = "~/Misc/cabinet.nvim",
+        "smilhey/cabinet.nvim",
         config = function()
             local cabinet = require("cabinet")
             cabinet:setup({ initial_drawers = { "bar", "foo" }, usercmd = false })
