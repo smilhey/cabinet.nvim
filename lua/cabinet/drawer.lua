@@ -83,9 +83,6 @@ function Drawer:close()
 			vim.bo[buffer].buflisted = false
 		end)
 	end
-	vim.cmd("silent tabonly")
-	vim.cmd("silent only")
-	vim.cmd("cd")
 end
 
 function Drawer:save_qflist()

@@ -17,7 +17,7 @@ local function picker(opts)
 	available_drawers = vim.tbl_map(function(drawer)
 		if drawer.name == cabinet.drawer_current() then
 			return (drawer.name .. " - " .. vim.fn.getcwd(0))
-		elseif drawer.name == nil then
+		elseif drawer.current_wininfo == nil then
 			return (drawer.name .. " - " .. "cwd has not been set")
 		end
 		return drawer.name .. " - " .. drawer.current_wininfo.cwd

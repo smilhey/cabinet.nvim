@@ -17,6 +17,9 @@ function M:setup(config)
 	}
 	M.drawer_manager = Manager:new(config.initial_drawers)
 	local cache = vim.fn.stdpath("cache")
+	if vim.fn.isdirectory(cache .. "/cabinet/saved") == 0 then
+		vim.fn.mkdir(cache .. "/cabinet/saved", "p")
+	end
 	if vim.fn.isdirectory(cache .. "/cabinet/" .. M.drawer_manager.id) == 0 then
 		vim.fn.mkdir(cache .. "/cabinet/" .. M.drawer_manager.id, "p")
 	end
