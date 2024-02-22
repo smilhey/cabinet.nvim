@@ -3,11 +3,22 @@ https://github.com/smilhey/cabinet.nvim/assets/128088782/61572d78-7d54-4827-a16a
 
 # Cabinet
 
+## This still a WIP all suggestions and PR are welcome !
+
 cabinet.nvim is a plugin for Neovim that allows you to manage your 
-buffers in an object called drawer, cabinet tries to be as unobtrusive as possible.
+partition your buffers in order to help nvim be a better multiplexing tool.
 
 The goal is to add a level of grouping and organization to your buffers without 
-change how you you navigate them.
+changing how you you navigate them. 
+
+Here is the workflow it enables : 
+
+- You open nvim and start working on a project. At some point you open a file in another project ! You wander for 
+a bit and then you want to go back to the previous project. You use telescope find files but you've changed directory ! You find your way baback but your jumplist is all over the place ... Trying telescope buffers is no better because at this point you've opened too many files.
+
+- With cabinet you only need to switch to a different drawer at the beginning of you getting sidetracked. When you want to come back, you only need to go back to the previous drawer. All your tabs and windows with their jumplists, loclists, quickfix and current directory will have been preserved. 
+
+- Inside a drawer you only interact with buffers that you have deliberatly opened in that drawer. (:bnext, :bprev, <C-O>, <C-I> ... )
 
 ### Features : 
 
@@ -61,104 +72,28 @@ Cabinet exposes a simple API for interacting with its functionality programmatic
 
 #### Functions
 
-#### `M.setup(config)`
+| Function                           | Description                                                                                                 |
+|------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `M.setup(config)`                  | Set up the Cabinet plugin with the provided configuration options.                                          |
+| `M.drawer_create(drawnm)`          | Create a new drawer with the specified name.                                                                |
+| `M.drawer_select(drawnm)`          | Switch to the specified drawer.                                                                             |
+| `M.drawer_delete(drawnm)`          | Delete the specified drawer.                                                                                |
+| `M.drawer_rename(old_drawnm, new_drawnm)` | Rename a drawer.                                                                                           |
+| `M.drawer_previous()`              | Switch to the previous drawer in the order of creation.                                                      |
+| `M.drawer_next()`                  | Switch to the next drawer in the order of creation.                                                          |
+| `M.drawer_list_buffers()`          | Get a list of buffers managed by the current drawer.                                                         |
+| `M.drawer_list()`                  | Get a list of names of all drawers.                                                                         |
+| `M.drawer_current()`               | Get the name of the current drawer.                                                                         |
+| `M.buf_move(buffer, drawnm_from, drawnm_to)` | Move a buffer from one drawer to another.                                                               |
 
-Set up the Cabinet plugin with the provided configuration options.
+### User Events:
 
-- `config`: (table) Optional. Configuration options for Cabinet.
-  - `initial_drawers`: (table) Optional. List of initial drawer names. Defaults to an empty table.
-  - `usercmd`: (boolean) Optional. Whether to set up user commands. Defaults to `true`.
-
-#### `M.drawer_create(drawnm)`
-
-Create a new drawer with the specified name.
-
-- `drawnm`: (string|nil) Optional. Name of the drawer to create. If `nil`, a default name will be assigned.
-
-Returns `true` if the drawer is created successfully; otherwise, `false`.
-
-#### `M.drawer_select(drawnm)`
-
-Switch to the specified drawer.
-
-- `drawnm`: (string) Name of the drawer to switch to.
-
-Returns `true` if the switch is successful; otherwise, `false`.
-
-#### `M.drawer_delete(drawnm)`
-
-Delete the specified drawer.
-
-- `drawnm`: (string) Name of the drawer to delete.
-
-Returns `true` if the drawer is deleted successfully; otherwise, `false`.
-
-#### `M.drawer_rename(old_drawnm, new_drawnm)`
-
-Rename a drawer.
-
-- `old_drawnm`: (string) Name of the drawer to rename.
-- `new_drawnm`: (string) New name for the drawer.
-
-Returns `true` if the drawer is renamed successfully; otherwise, `false`.
-
-#### `M.drawer_previous()`
-
-Switch to the previous drawer in the order of creation.
-
-#### `M.drawer_next()`
-
-Switch to the next drawer in the order of creation.
-
-#### `M.drawer_list_buffers()`
-
-Get a list of buffers managed by the current drawer, there should be no 
-unlisted buffer in this list unless something wrong happened.
-
-Returns a table containing the buffer numbers.
-
-#### `M.drawer_list()`
-
-Get a list of names of all drawers.
-
-Returns a table containing the drawer names.
-
-#### `M.drawer_current()`
-
-Get the name of the current drawer.
-
-Returns the name of the current drawer as a string.
-
-#### `M.buf_move(buffer, drawnm_from, drawnm_to)`
-
-Move a buffer from one drawer to another.
-
-- `buffer`: (number) Buffer handle.
-- `drawnm_from`: (string) Name of the drawer to move the buffer from.
-- `drawnm_to`: (string) Name of the drawer to move the buffer to.
-
-Returns `true` if the buffer is moved successfully; otherwise, `false`.
-
-### User Events: 
-
-The plugin emits the following user events that you can listen for and respond to in your Neovim configuration: 
-
-#### "DrawLeave" 
-
-Emitted when the user leaves a drawer, any buffer added at this point will belong to the next drawer. data = {previous_drawnm, next_drawnm}
-
-#### "DrawAdd" 
-
-Emitted when a new drawer is created. data = {new_drawnm}
-
-#### "DrawNewEnter"  
-
-Emitted when the user enters the name of a new drawer. data = {previous_drawnm, new_drawnm}
-
-#### "DrawEnter" 
-
-Emitted when the user enters an existing drawer after the layout and window information has been restored. data = {previous_drawnm, new_drawnm}
-
+| Event Name      | Description                                                                                                       | Data                    |
+|-----------------|-------------------------------------------------------------------------------------------------------------------|-------------------------|
+| "DrawLeave"     | Emitted when the user leaves a drawer, any buffer added at this point will belong to the next drawer.             | `{previous_drawnm, next_drawnm}` |
+| "DrawAdd"       | Emitted when a new drawer is created.                                                                             | `{new_drawnm}`         |
+| "DrawNewEnter"  | Emitted when the user enters the name of a new drawer.                                                           | `{previous_drawnm, new_drawnm}` |
+| "DrawEnter"     | Emitted when the user enters an existing drawer after the layout and window information has been restored.        | `{previous_drawnm, new_drawnm}` |
 Here are some ways you could use those events  
 
 #### Config example : 
