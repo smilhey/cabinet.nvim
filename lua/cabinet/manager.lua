@@ -67,7 +67,6 @@ function Manager:switch_drawer(handle)
 	previous_drawer:close()
 	vim.cmd("silent tabonly")
 	vim.cmd("silent only")
-	vim.cmd("cd")
 	self.current_handle = handle
 
 	vim.api.nvim_exec_autocmds("User", {
